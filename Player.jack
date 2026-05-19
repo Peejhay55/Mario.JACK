@@ -50,24 +50,24 @@ class Player {
 
     method void moveLeft() {
         if (onGround & (x > 2)) {
-            let x = x - 3;
+            let x = x - 5;
         }
         if (~onGround & (x > 2)) {
-            let x = x - 3;
+            let x = x - 5;
         }
-        let vx = -3;
+        let vx = -5;
         let movedHorizontally = true;
         return;
     }
 
     method void moveRight() {
         if (onGround & ((x + width) < 509)) {
-            let x = x + 3;
+            let x = x + 5;
         }
         if (~onGround & ((x + width) < 509)) {
-            let x = x + 3;
+            let x = x + 5;
         }
-        let vx = 3;
+        let vx = 5;
         let movedHorizontally = true;
         return;
     }
@@ -75,7 +75,7 @@ class Player {
     /** Inicia un salto si el jugador esta en el suelo */
     method void jump() {
         if (onGround) {
-            let vy = -14;
+            let vy = -18;   // mas alto que antes (-14)
             let onGround = false;
         }
         return;
@@ -93,7 +93,7 @@ class Player {
             let x = x + vx;
         }
 
-        let vy = vy + 2;          // gravedad
+        let vy = vy + 3;          // gravedad (antes 2, ahora mas rapida)
         let y = y + vy;
 
         // Aterriza en el suelo: compara la posicion de los PIES (y + height)
