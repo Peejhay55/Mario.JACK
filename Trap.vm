@@ -63,6 +63,10 @@ label Trap_0
     pop temp 0
     push local 0
     push local 1
+    push this 4
+    add
+    push constant 4
+    sub
     push local 0
     push this 4
     add
@@ -75,77 +79,148 @@ label Trap_0
     sub
     call Screen.drawRectangle 4
     pop temp 0
-    push constant 0
-    call Screen.setColor 1
-    pop temp 0
     push local 0
-    push constant 1
-    add
-    push local 1
-    push constant 1
-    add
-    push local 0
-    push this 4
-    add
     push constant 2
-    sub
+    add
     push local 1
     push this 4
     add
-    push constant 2
+    push constant 4
     sub
-    call Screen.drawRectangle 4
+    push local 0
+    push constant 2
+    add
+    push local 1
+    push constant 2
+    add
+    call Screen.drawLine 4
     pop temp 0
-    push constant 1
-    neg
-    call Screen.setColor 1
+    push local 0
+    push constant 3
+    add
+    push local 1
+    push this 4
+    add
+    push constant 4
+    sub
+    push local 0
+    push constant 2
+    add
+    push local 1
+    push constant 2
+    add
+    call Screen.drawLine 4
     pop temp 0
     push local 0
     push constant 4
     add
     push local 1
+    push this 4
+    add
+    push constant 4
+    sub
+    push local 0
     push constant 2
     add
+    push local 1
+    push constant 2
+    add
+    call Screen.drawLine 4
+    pop temp 0
     push local 0
-    push constant 4
+    push constant 7
     add
     push local 1
     push this 4
     add
-    push constant 2
+    push constant 4
     sub
+    push local 0
+    push constant 7
+    add
+    push local 1
+    push constant 2
+    add
     call Screen.drawLine 4
     pop temp 0
     push local 0
     push constant 8
     add
     push local 1
+    push this 4
+    add
+    push constant 4
+    sub
+    push local 0
+    push constant 7
+    add
+    push local 1
     push constant 2
     add
+    call Screen.drawLine 4
+    pop temp 0
     push local 0
-    push constant 8
+    push constant 9
     add
     push local 1
     push this 4
     add
-    push constant 2
+    push constant 4
     sub
+    push local 0
+    push constant 7
+    add
+    push local 1
+    push constant 2
+    add
     call Screen.drawLine 4
     pop temp 0
     push local 0
     push constant 12
     add
     push local 1
-    push constant 2
+    push this 4
     add
+    push constant 4
+    sub
     push local 0
     push constant 12
     add
     push local 1
+    push constant 2
+    add
+    call Screen.drawLine 4
+    pop temp 0
+    push local 0
+    push constant 11
+    add
+    push local 1
     push this 4
     add
-    push constant 2
+    push constant 4
     sub
+    push local 0
+    push constant 12
+    add
+    push local 1
+    push constant 2
+    add
+    call Screen.drawLine 4
+    pop temp 0
+    push local 0
+    push constant 13
+    add
+    push local 1
+    push this 4
+    add
+    push constant 4
+    sub
+    push local 0
+    push constant 12
+    add
+    push local 1
+    push constant 2
+    add
     call Screen.drawLine 4
     pop temp 0
     goto Trap_2

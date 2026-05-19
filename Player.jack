@@ -87,6 +87,8 @@ class Player {
      * Devuelve true si el jugador cayo al vacio (y > 255).
      */
     method boolean applyGravity(int groundY) {
+        // Inercia horizontal en el aire: se aplica solo si el jugador
+        // NO presiono tecla horizontal este frame (movedHorizontally = false)
         if (~onGround & (~movedHorizontally)) {
             let x = x + vx;
         }

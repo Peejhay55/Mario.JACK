@@ -181,15 +181,22 @@ class Map {
     }
 
     method void drawSpike(int x, int y) {
-        // Pinchos: borde + 3 lineas verticales internas
+        // Pinchos: base solida en la parte inferior, tres triangulos apuntando arriba
+        // Base inferior (3 pixeles de alto)
         do Screen.setColor(true);
-        do Screen.drawRectangle(x, y, x + cellSize - 1, y + cellSize - 1);
-        do Screen.setColor(false);
-        do Screen.drawRectangle(x + 1, y + 1, x + cellSize - 2, y + cellSize - 2);
-        do Screen.setColor(true);
-        do Screen.drawLine(x + 4,  y + 3, x + 4,  y + cellSize - 3);
-        do Screen.drawLine(x + 8,  y + 3, x + 8,  y + cellSize - 3);
-        do Screen.drawLine(x + 12, y + 3, x + 12, y + cellSize - 3);
+        do Screen.drawRectangle(x, y + cellSize - 4, x + cellSize - 1, y + cellSize - 1);
+        // Pincho izquierdo: linea desde base hasta punta superior
+        do Screen.drawLine(x + 2,  y + cellSize - 4, x + 2,  y + 2);
+        do Screen.drawLine(x + 3,  y + cellSize - 4, x + 2,  y + 2);
+        do Screen.drawLine(x + 4,  y + cellSize - 4, x + 2,  y + 2);
+        // Pincho central
+        do Screen.drawLine(x + 7,  y + cellSize - 4, x + 7,  y + 2);
+        do Screen.drawLine(x + 8,  y + cellSize - 4, x + 7,  y + 2);
+        do Screen.drawLine(x + 9,  y + cellSize - 4, x + 7,  y + 2);
+        // Pincho derecho
+        do Screen.drawLine(x + 12, y + cellSize - 4, x + 12, y + 2);
+        do Screen.drawLine(x + 11, y + cellSize - 4, x + 12, y + 2);
+        do Screen.drawLine(x + 13, y + cellSize - 4, x + 12, y + 2);
         return;
     }
 

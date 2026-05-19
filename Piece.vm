@@ -4,7 +4,7 @@ function Piece.new 0
     pop pointer 0
     push argument 0
     pop this 2
-    push constant 0
+    push constant 1
     pop this 0
     push constant 8
     pop this 1
@@ -401,14 +401,14 @@ label Piece_18
 function Piece.moveDown 1
     push argument 0
     pop pointer 0
-    push constant 14
+    push constant 13
     pop local 0
     push this 2
     push constant 1
     eq
     not
     if-goto Piece_21
-    push constant 13
+    push constant 12
     pop local 0
     goto Piece_20
 label Piece_21
@@ -418,7 +418,7 @@ label Piece_20
     eq
     not
     if-goto Piece_23
-    push constant 12
+    push constant 11
     pop local 0
     goto Piece_22
 label Piece_23
@@ -428,7 +428,7 @@ label Piece_22
     eq
     not
     if-goto Piece_25
-    push constant 13
+    push constant 12
     pop local 0
     goto Piece_24
 label Piece_25

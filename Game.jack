@@ -354,18 +354,21 @@ class Game {
             do player.draw();
 
             // Detecta colision con trampas o celdas peligrosas
+            // Comprueba las cuatro esquinas del cuerpo de Mario
             let px = player.getX();
+            let py = player.getY();
             let cellCol = px / 16;
-            let cellRow = (py + player.getH()) / 16;
-            if (gameMap.isDanger(cellRow, cellCol)) {
-                let alive = false;
-            }
-            if (gameMap.isDanger(cellRow, cellCol + 1)) {
-                let alive = false;
-            }
+            let cellRow = py / 16;
+            // Esquina superior izquierda y derecha
+            if (gameMap.isDanger(cellRow, cellCol))              { let alive = false; }
+            if (gameMap.isDanger(cellRow, (px + player.getW()) / 16)) { let alive = false; }
+            // Esquina inferior izquierda y derecha
+            let cellRow = (py + player.getH() - 1) / 16;
+            if (gameMap.isDanger(cellRow, cellCol))              { let alive = false; }
+            if (gameMap.isDanger(cellRow, (px + player.getW()) / 16)) { let alive = false; }
 
-            // Detecta meta
-            if (gameMap.isGoal(cellRow, cellCol + 1)) {
+            // Detecta meta - verifica la celda del centro de Mario
+            if (gameMap.isGoal((py + player.getH() - 1) / 16, (px + 5) / 16)) {
                 let won = true;
             }
 

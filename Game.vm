@@ -1399,14 +1399,14 @@ label Game_78
     push this 1
     call Player.getX 1
     pop local 3
+    push this 1
+    call Player.getY 1
+    pop local 4
     push local 3
     push constant 16
     call Math.divide 2
     pop local 7
     push local 4
-    push this 1
-    call Player.getH 1
-    add
     push constant 16
     call Math.divide 2
     pop local 8
@@ -1423,9 +1423,12 @@ label Game_85
 label Game_84
     push this 0
     push local 8
-    push local 7
-    push constant 1
+    push local 3
+    push this 1
+    call Player.getW 1
     add
+    push constant 16
+    call Math.divide 2
     call Map.isDanger 3
     not
     if-goto Game_87
@@ -1434,20 +1437,65 @@ label Game_84
     goto Game_86
 label Game_87
 label Game_86
+    push local 4
+    push this 1
+    call Player.getH 1
+    add
+    push constant 1
+    sub
+    push constant 16
+    call Math.divide 2
+    pop local 8
     push this 0
     push local 8
     push local 7
-    push constant 1
-    add
-    call Map.isGoal 3
+    call Map.isDanger 3
     not
     if-goto Game_89
-    push constant 1
-    neg
-    pop local 2
+    push constant 0
+    pop local 1
     goto Game_88
 label Game_89
 label Game_88
+    push this 0
+    push local 8
+    push local 3
+    push this 1
+    call Player.getW 1
+    add
+    push constant 16
+    call Math.divide 2
+    call Map.isDanger 3
+    not
+    if-goto Game_91
+    push constant 0
+    pop local 1
+    goto Game_90
+label Game_91
+label Game_90
+    push this 0
+    push local 4
+    push this 1
+    call Player.getH 1
+    add
+    push constant 1
+    sub
+    push constant 16
+    call Math.divide 2
+    push local 3
+    push constant 5
+    add
+    push constant 16
+    call Math.divide 2
+    call Map.isGoal 3
+    not
+    if-goto Game_93
+    push constant 1
+    neg
+    pop local 2
+    goto Game_92
+label Game_93
+label Game_92
     push this 2
     call Score.draw 1
     pop temp 0
@@ -1958,13 +2006,13 @@ function Game.dispose 0
     eq
     not
     not
-    if-goto Game_91
+    if-goto Game_95
     push this 1
     call Player.dispose 1
     pop temp 0
-    goto Game_90
-label Game_91
-label Game_90
+    goto Game_94
+label Game_95
+label Game_94
     push pointer 0
     call Memory.deAlloc 1
     pop temp 0

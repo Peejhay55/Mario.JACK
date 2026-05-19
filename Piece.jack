@@ -17,7 +17,7 @@ class Piece {
 
     constructor Piece new(int t) {
         let pieceType = t;
-        let row = 0;
+        let row = 1;   // fila 1 para no solapar con el HUD de la fila 0
         let col = 8;   // empieza en el centro horizontal (~columna 8 de 32)
         let size = 16;
         return this;
@@ -99,10 +99,10 @@ class Piece {
     /** Baja la pieza una celda */
     method void moveDown() {
         var int maxRow;
-        let maxRow = 14;
-        if (pieceType = 1) { let maxRow = 13; }
-        if (pieceType = 3) { let maxRow = 12; }
-        if (pieceType = 4) { let maxRow = 13; }
+        let maxRow = 13;       // tipo 2 (1x3): ocupa 1 fila, maximo fila 13
+        if (pieceType = 1) { let maxRow = 12; }  // 2x2: ocupa 2 filas, maximo fila 12
+        if (pieceType = 3) { let maxRow = 11; }  // 3x1: ocupa 3 filas, maximo fila 11
+        if (pieceType = 4) { let maxRow = 12; }  // L: ocupa 2 filas, maximo fila 12
         if (row < maxRow) {
             do erase();
             let row = row + 1;
