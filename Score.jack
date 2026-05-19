@@ -28,9 +28,16 @@ class Score {
     /** Muestra puntaje y nivel en la esquina superior derecha */
     method void draw() {
         do Output.moveCursor(0, 24);
-        do Output.printString("LVL:");
+        do Output.printChar(76);
+        do Output.printChar(86);
+        do Output.printChar(76);
+        do Output.printChar(58);
         do Output.printInt(level);
-        do Output.printString(" PTS:");
+        do Output.printChar(32);
+        do Output.printChar(80);
+        do Output.printChar(84);
+        do Output.printChar(83);
+        do Output.printChar(58);
         do Output.printInt(points);
         return;
     }
