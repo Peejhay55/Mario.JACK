@@ -1,0 +1,14 @@
+/**
+ * TetriPath - Main
+ * Punto de entrada del juego. Inicializa y ejecuta el bucle principal.
+ */
+class Main {
+    function void main() {
+        var Game game;
+        let game = Game.new();
+        do game.showMenu();
+        do game.run();
+        do game.dispose();
+        return;
+    }
+}

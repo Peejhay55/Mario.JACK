@@ -1,0 +1,124 @@
+/**
+ * TetriPath - Player
+ * Personaje tipo Mario controlado por el jugador en la fase de carrera.
+ * Se representa como un cuadro de 10x14 pixeles.
+ * Controles: flechas izquierda/derecha para moverse, arriba para saltar.
+ */
+class Player {
+    field int x;        // posicion en pixeles
+    field int y;
+    field int vx;       // velocidad horizontal
+    field int vy;       // velocidad vertical (para salto)
+    field boolean onGround;
+    field boolean movedHorizontally;
+    field int width;
+    field int height;
+
+    constructor Player new(int startX, int startY) {
+        let x = startX;
+        let y = startY;
+        let vx = 0;
+        let vy = 0;
+        let onGround = true;
+        let movedHorizontally = false;
+        let width = 10;
+        let height = 14;
+        return this;
+    }
+
+    method void beginFrame() {
+        let movedHorizontally = false;
+        return;
+    }
+
+    method void draw() {
+        // Cuerpo
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x, y, x + width, y + height);
+        // Ojos (dos pixeles blancos)
+        do Screen.setColor(false);
+        do Screen.drawPixel(x + 3, y + 4);
+        do Screen.drawPixel(x + 7, y + 4);
+        return;
+    }
+
+    method void erase() {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x, y, x + width, y + height);
+        return;
+    }
+
+    method void moveLeft() {
+        if (onGround & (x > 2)) {
+            let x = x - 3;
+        }
+        if (~onGround & (x > 2)) {
+            let x = x - 3;
+        }
+        let vx = -3;
+        let movedHorizontally = true;
+        return;
+    }
+
+    method void moveRight() {
+        if (onGround & ((x + width) < 509)) {
+            let x = x + 3;
+        }
+        if (~onGround & ((x + width) < 509)) {
+            let x = x + 3;
+        }
+        let vx = 3;
+        let movedHorizontally = true;
+        return;
+    }
+
+    /** Inicia un salto si el jugador esta en el suelo */
+    method void jump() {
+        if (onGround) {
+            let vy = -14;
+            let onGround = false;
+        }
+        return;
+    }
+
+    /**
+     * Aplica gravedad y actualiza posicion vertical.
+     * groundY: coordenada Y del suelo actual bajo el jugador.
+     * Devuelve true si el jugador cayo al vacio (y > 255).
+     */
+    method boolean applyGravity(int groundY) {
+        if (~onGround & (~movedHorizontally)) {
+            let x = x + vx;
+        }
+
+        let vy = vy + 2;          // gravedad
+        let y = y + vy;
+
+        // Aterriza en el suelo: compara la posicion de los PIES (y + height)
+        if ((y + height) > groundY) {
+            let y = groundY - height;
+            let vy = 0;
+            let onGround = true;
+            let vx = 0;
+        } else {
+            let onGround = false;
+        }
+
+        if (x < 2) { let x = 2; }
+        if ((x + width) > 509) { let x = 509 - width; }
+
+        // Cayo fuera de pantalla
+        if (y > 256) { return true; }
+        return false;
+    }
+
+    method int getX()  { return x; }
+    method int getY()  { return y; }
+    method int getW()  { return width; }
+    method int getH()  { return height; }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}

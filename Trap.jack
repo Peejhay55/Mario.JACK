@@ -1,0 +1,76 @@
+/**
+ * TetriPath - Trap
+ * Representa una trampa en el mapa.
+ * trapType: 1 = hueco (cuadro negro), 2 = pinchos (lineas verticales)
+ */
+class Trap {
+    field int row;
+    field int col;
+    field int trapType;
+    field boolean active;
+    field int size;
+
+    constructor Trap new(int r, int c, int t) {
+        let row = r;
+        let col = c;
+        let trapType = t;
+        let active = true;
+        let size = 16;
+        return this;
+    }
+
+    method void draw() {
+        var int x, y;
+        let x = col * size;
+        let y = row * size;
+        if (trapType = 1) {
+            // Hueco: rectangulo negro solido
+            do Screen.setColor(true);
+            do Screen.drawRectangle(x, y, x + size - 1, y + size - 1);
+        }
+        if (trapType = 2) {
+            // Pinchos: borde y tres lineas internas
+            do Screen.setColor(true);
+            do Screen.drawRectangle(x, y, x + size - 1, y + size - 1);
+            do Screen.setColor(false);
+            do Screen.drawRectangle(x + 1, y + 1, x + size - 2, y + size - 2);
+            do Screen.setColor(true);
+            do Screen.drawLine(x + 4,  y + 2, x + 4,  y + size - 2);
+            do Screen.drawLine(x + 8,  y + 2, x + 8,  y + size - 2);
+            do Screen.drawLine(x + 12, y + 2, x + 12, y + size - 2);
+        }
+        return;
+    }
+
+    method void erase() {
+        var int x, y;
+        let x = col * size;
+        let y = row * size;
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x, y, x + size - 1, y + size - 1);
+        return;
+    }
+
+    /** Devuelve true si el pixel (px, py) esta dentro de esta trampa */
+    method boolean hits(int px, int py) {
+        var int x, y;
+        let x = col * size;
+        let y = row * size;
+        if (~active)           { return false; }
+        if (px < x)            { return false; }
+        if (px > (x + size - 1)) { return false; }
+        if (py < y)            { return false; }
+        if (py > (y + size - 1)) { return false; }
+        return true;
+    }
+
+    method int getRow()      { return row; }
+    method int getCol()      { return col; }
+    method boolean getActive() { return active; }
+    method void setActive(boolean a) { let active = a; return; }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}

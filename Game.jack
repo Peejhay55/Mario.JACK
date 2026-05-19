@@ -1,0 +1,432 @@
+/**
+ * TetriPath - Game
+ * Orquesta las tres fases de cada nivel:
+ *   Fase 1 - Previzualizacion: muestra el mapa 3 segundos
+ *   Fase 2 - Construccion:     el jugador coloca piezas tipo Tetris
+ *   Fase 3 - Carrera:          el jugador controla a Mario manualmente
+ *
+ * Controles fase 2 (construccion):
+ *   Flecha izquierda / derecha : mover pieza
+ *   Flecha abajo               : bajar pieza rapido
+ *   Espacio                    : colocar pieza donde esta
+ *   Q                          : terminar fase de construccion
+ *
+ * Controles fase 3 (carrera):
+ *   Flecha izquierda / derecha : mover a Mario
+ *   Flecha arriba              : saltar
+ */
+class Game {
+    field Map     gameMap;
+    field Player  player;
+    field Score   score;
+    field boolean running;
+    field int     startLevel;
+    field int     directionHorizontal; // 0 quieto, 1 izquierda, 2 derecha
+    field int     jumpState;           // 0 suelo, 1 subiendo, 2 bajando
+    field int     jumpHeight;
+
+    constructor Game new() {
+        let gameMap    = Map.new();
+        let score      = Score.new();
+        let running    = true;
+        let startLevel = 1;
+        let directionHorizontal = 0;
+        let jumpState = 0;
+        let jumpHeight = 0;
+        return this;
+    }
+
+    /**
+     * Menu de inicio: muestra titulo y opciones de nivel.
+     * El jugador presiona 1, 2 o 3 para elegir nivel de inicio.
+     */
+    method void showMenu() {
+        var char key;
+        var boolean chosen;
+        let chosen = false;
+
+        while (~chosen) {
+            do Screen.clearScreen();
+
+            // Titulo principal (fila 2, centrado)
+            do Output.moveCursor(2, 9);
+            do Output.printString("=== BIENVENIDO A TETRIPATH ===");
+
+            // Subtitulo
+            do Output.moveCursor(5, 10);
+            do Output.printString("Elige el nivel que quieres jugar");
+
+            // Separador
+            do Output.moveCursor(7, 9);
+            do Output.printString("------------------------------");
+
+            // Opciones
+            do Output.moveCursor(9, 14);
+            do Output.printString("[ 1 ]  Nivel 1");
+            do Output.moveCursor(11, 14);
+            do Output.printString("[ 2 ]  Nivel 2");
+            do Output.moveCursor(13, 14);
+            do Output.printString("[ 3 ]  Nivel 3");
+
+            // Separador inferior
+            do Output.moveCursor(15, 9);
+            do Output.printString("------------------------------");
+
+            // Instruccion
+            do Output.moveCursor(17, 11);
+            do Output.printString("Presiona 1, 2 o 3");
+
+            let key = Keyboard.readChar();
+
+            if (key = 49) { let startLevel = 1; let chosen = true; }  // '1'
+            if (key = 50) { let startLevel = 2; let chosen = true; }  // '2'
+            if (key = 51) { let startLevel = 3; let chosen = true; }  // '3'
+        }
+        return;
+    }
+
+    method void run() {
+        var int level;
+        let level = startLevel;
+
+        while (running & (level < 4)) {
+            do runLevel(level);
+            if (running) {
+                do score.nextLevel();
+                let level = level + 1;
+            }
+        }
+
+        if (running) {
+            do showWin();
+        }
+        return;
+    }
+
+    // -------------------------------------------------------
+    // Bucle de un nivel completo
+    // -------------------------------------------------------
+    method void runLevel(int level) {
+        do gameMap.loadLevel(level);
+
+        // --- Fase 1: previa de 3 segundos ---
+        do Screen.clearScreen();
+        do Output.moveCursor(0, 0);
+        do Output.printString("NIVEL ");
+        do Output.printInt(level);
+        do Output.printString(" - MEMORIZA EL MAPA");
+        do gameMap.draw();
+        do score.draw();
+        do Sys.wait(3000);
+
+        // --- Fase 2: construccion ---
+        do Screen.clearScreen();
+        do Output.moveCursor(0, 0);
+        do Output.printString("CONSTRUYE! Q=listo Esp=colocar");
+        do gameMap.draw();
+        do score.draw();
+        do runBuildPhase();
+
+        // --- Fase 3: carrera ---
+        do Screen.clearScreen();
+        do gameMap.draw();
+        do score.draw();
+        let player = Player.new(8, 208);   // empieza en columna 0, fila 13
+        do player.draw();
+        // Segunda pasada: asegura que los bloques colocados (valor 2) sean visibles
+        // incluso si el dibujado del jugador inicial solapo alguno
+        do gameMap.draw();
+
+        if (~runRacePhase()) {
+            // Murio
+            do player.dispose();
+            let player = null;
+            do showGameOver();
+            let running = false;
+        } else {
+            // Llego a la meta
+            do score.addPoints(100 * level);
+            do player.dispose();
+            let player = null;
+            do showLevelClear(level);
+        }
+        return;
+    }
+
+    // -------------------------------------------------------
+    // Fase 2: construccion
+    // -------------------------------------------------------
+    method void runBuildPhase() {
+        var Piece piece;
+        var char key;
+        var boolean placing;
+        var int pieceType;
+
+        let placing = true;
+        let pieceType = 1;
+
+        let piece = Piece.new(pieceType);
+        do piece.draw();
+
+        while (placing) {
+            let key = Keyboard.keyPressed();
+
+            if (key = 130) { do piece.moveLeft();  do Sys.wait(80); }   // flecha izq
+            if (key = 132) { do piece.moveRight(); do Sys.wait(80); }   // flecha der
+            if (key = 133) { do piece.moveDown();  do Sys.wait(80); }   // flecha abajo
+
+            // Espacio: coloca la pieza y crea una nueva
+            if (key = 32) {
+                do placePiece(piece);
+                do piece.dispose();
+                // Cicla entre tipos 1-4
+                let pieceType = pieceType + 1;
+                if (pieceType > 4) { let pieceType = 1; }
+                let piece = Piece.new(pieceType);
+                do piece.draw();
+                do Sys.wait(200);
+            }
+
+            // Q = terminar fase de construccion
+            if ((key = 81) | (key = 113)) {
+                let placing = false;
+            }
+
+            do Sys.wait(10);
+        }
+
+        do piece.erase();
+        do piece.dispose();
+        // Restaura los bloques colocados que piece.erase() pudo haber borrado visualmente
+        do gameMap.draw();
+        do score.draw();
+        return;
+    }
+
+    /**
+     * Escribe los bloques de la pieza en la grilla del mapa.
+     * Convierte la posicion de la pieza (en celdas) a celdas de la grilla.
+     */
+    method void placePiece(Piece p) {
+        var int r, c, t;
+        let r = p.getRow();
+        let c = p.getCol();
+        let t = p.getType();
+
+        if (t = 1) {   // cuadro 2x2
+            do setIfEmpty(r,   c);
+            do setIfEmpty(r,   c + 1);
+            do setIfEmpty(r + 1, c);
+            do setIfEmpty(r + 1, c + 1);
+        }
+        if (t = 2) {   // linea 1x3
+            do setIfEmpty(r, c);
+            do setIfEmpty(r, c + 1);
+            do setIfEmpty(r, c + 2);
+        }
+        if (t = 3) {   // linea 3x1
+            do setIfEmpty(r,     c);
+            do setIfEmpty(r + 1, c);
+            do setIfEmpty(r + 2, c);
+        }
+        if (t = 4) {   // forma L
+            do setIfEmpty(r,     c);
+            do setIfEmpty(r + 1, c);
+            do setIfEmpty(r + 1, c + 1);
+        }
+
+        // Redibuja el mapa para mostrar los bloques colocados
+        do gameMap.draw();
+        do score.draw();
+        return;
+    }
+
+    /**
+     * Redibuja las celdas del mapa en un area 4x5 centrada en (px,py).
+     * Cubre tanto la posicion anterior como la actual de Mario para
+     * garantizar que ningun bloque quede borrado tras el erase().
+     */
+    method void redrawZone(int px, int py) {
+        var int c, r, startC, startR, endC, endR;
+        let startC = (px / 16) - 1;
+        let startR = (py / 16) - 1;
+        let endC   = startC + 3;
+        let endR   = startR + 4;
+        if (startC < 0)  { let startC = 0;  }
+        if (startR < 0)  { let startR = 0;  }
+        if (endC > 31)   { let endC = 31;   }
+        if (endR > 15)   { let endR = 15;   }
+        let r = startR;
+        while (~(r > endR)) {
+            let c = startC;
+            while (~(c > endC)) {
+                do gameMap.drawCell(r, c);
+                let c = c + 1;
+            }
+            let r = r + 1;
+        }
+        return;
+    }
+
+    method void setIfEmpty(int r, int c) {
+        if (r < 0)  { return; }
+        if (r > 15) { return; }
+        if (c < 0)  { return; }
+        if (c > 31) { return; }
+        if (gameMap.getCell(r, c) = 0) {
+            do gameMap.setCell(r, c, 2);
+        }
+        return;
+    }
+
+    // -------------------------------------------------------
+    // Fase 3: carrera
+    // -------------------------------------------------------
+    // Devuelve true si el jugador llego a la meta, false si murio.
+    method boolean runRacePhase() {
+        var char key;
+        var boolean alive, won;
+        var int px, py, groundY, groundY2;
+        var int cellCol, cellRow;
+        var int prevY;
+
+        let alive = true;
+        let won   = false;
+        let directionHorizontal = 0;
+        let jumpState = 0;
+        let jumpHeight = 0;
+
+        while (alive & (~won)) {
+            let key = Keyboard.keyPressed();
+
+            do player.beginFrame();
+
+            // Borrar ANTES de mover para evitar estela
+            do player.erase();
+
+            // 1) Input: solo actualiza estados
+            if (key = 130) { let directionHorizontal = 1; }
+            if (key = 132) { let directionHorizontal = 2; }
+            if (key = 0)   { let directionHorizontal = 0; }
+            if ((key = 131) & (jumpState = 0)) {
+                do player.jump();
+                let jumpState = 1;
+                let jumpHeight = 0;
+            }
+
+            // 2) Fisicas horizontales: se aplican en cada frame
+            if (directionHorizontal = 1) { do player.moveLeft();  }
+            if (directionHorizontal = 2) { do player.moveRight(); }
+
+            let prevY = player.getY();
+
+            // Gravedad: usar la posicion X ACTUALIZADA tras el movimiento horizontal
+            let px      = player.getX();
+            let py      = player.getY();
+            // Comprueba el suelo bajo el pie izquierdo y derecho, toma el mas cercano
+            let groundY = gameMap.groundBelow(px + 1, py + player.getH());
+            let groundY2 = gameMap.groundBelow(px + player.getW() - 1, py + player.getH());
+            if (groundY2 < groundY) { let groundY = groundY2; }
+
+            if (player.applyGravity(groundY)) {
+                let alive = false;
+            }
+
+            // Refresca estado del salto segun movimiento vertical real
+            let py = player.getY();
+            if ((py + player.getH()) = groundY) {
+                let jumpState = 0;
+                let jumpHeight = 0;
+            } else {
+                if (py < prevY) {
+                    let jumpState = 1;
+                    let jumpHeight = jumpHeight + (prevY - py);
+                }
+                if (py > prevY) {
+                    let jumpState = 2;
+                }
+            }
+
+            // Restaurar zona anterior Y zona nueva (cubre todo el recorrido)
+            do gameMap.draw();
+
+            // Redibujar jugador en nueva posicion
+            do player.draw();
+
+            // Detecta colision con trampas o celdas peligrosas
+            let px = player.getX();
+            let cellCol = px / 16;
+            let cellRow = (py + player.getH()) / 16;
+            if (gameMap.isDanger(cellRow, cellCol)) {
+                let alive = false;
+            }
+            if (gameMap.isDanger(cellRow, cellCol + 1)) {
+                let alive = false;
+            }
+
+            // Detecta meta
+            if (gameMap.isGoal(cellRow, cellCol + 1)) {
+                let won = true;
+            }
+
+            do score.draw();
+            do Sys.wait(40);
+        }
+
+        return won;
+    }
+
+    // -------------------------------------------------------
+    // Pantallas de estado
+    // -------------------------------------------------------
+    method void showGameOver() {
+        do Screen.clearScreen();
+        do Output.moveCursor(6, 10);
+        do Output.printString("GAME OVER");
+        do Output.moveCursor(8, 6);
+        do Output.printString("Puntaje final: ");
+        do Output.printInt(score.getPoints());
+        do Output.moveCursor(10, 4);
+        do Output.printString("Presiona cualquier tecla...");
+        do Keyboard.readChar();
+        return;
+    }
+
+    method void showLevelClear(int level) {
+        do Screen.clearScreen();
+        do Output.moveCursor(6, 8);
+        do Output.printString("NIVEL ");
+        do Output.printInt(level);
+        do Output.printString(" SUPERADO!");
+        do Output.moveCursor(8, 6);
+        do Output.printString("Puntos: ");
+        do Output.printInt(score.getPoints());
+        do Output.moveCursor(10, 4);
+        do Output.printString("Presiona cualquier tecla...");
+        do Keyboard.readChar();
+        return;
+    }
+
+    method void showWin() {
+        do Screen.clearScreen();
+        do Output.moveCursor(5, 8);
+        do Output.printString("FELICITACIONES!");
+        do Output.moveCursor(7, 6);
+        do Output.printString("Completaste TetriPath");
+        do Output.moveCursor(9, 6);
+        do Output.printString("Puntaje total: ");
+        do Output.printInt(score.getPoints());
+        do Output.moveCursor(11, 4);
+        do Output.printString("Presiona cualquier tecla...");
+        do Keyboard.readChar();
+        return;
+    }
+
+    method void dispose() {
+        do gameMap.dispose();
+        do score.dispose();
+        if (~(player = null)) { do player.dispose(); }
+        do Memory.deAlloc(this);
+        return;
+    }
+}

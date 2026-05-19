@@ -1,0 +1,122 @@
+/**
+ * TetriPath - Piece
+ * Pieza tipo Tetris que el jugador coloca durante la fase de construccion.
+ * Tipos de pieza (forma en grilla 2x2 o 1x4):
+ *   1 = cuadro 2x2
+ *   2 = linea horizontal 1x3
+ *   3 = linea vertical 3x1
+ *   4 = L (2 abajo + 1 derecha)
+ *
+ * Cada pieza ocupa celdas de 16x16 pixeles en el mapa.
+ */
+class Piece {
+    field int row;       // fila de la celda superior-izquierda
+    field int col;       // columna de la celda superior-izquierda
+    field int pieceType; // 1-4 segun forma
+    field int size;      // tamano de celda en pixeles
+
+    constructor Piece new(int t) {
+        let pieceType = t;
+        let row = 0;
+        let col = 8;   // empieza en el centro horizontal (~columna 8 de 32)
+        let size = 16;
+        return this;
+    }
+
+    /** Dibuja la pieza en su posicion actual */
+    method void draw() {
+        do Screen.setColor(true);
+        do drawShape();
+        return;
+    }
+
+    /** Borra la pieza de su posicion actual */
+    method void erase() {
+        do Screen.setColor(false);
+        do drawShape();
+        return;
+    }
+
+    /** Dibuja o borra las celdas segun el tipo de pieza */
+    method void drawShape() {
+        var int x, y;
+        let x = col * size;
+        let y = row * size;
+        if (pieceType = 1) {
+            // Cuadro 2x2
+            do Screen.drawRectangle(x,        y,        x + size - 2, y + size - 2);
+            do Screen.drawRectangle(x + size, y,        x + (2*size) - 2, y + size - 2);
+            do Screen.drawRectangle(x,        y + size, x + size - 2, y + (2*size) - 2);
+            do Screen.drawRectangle(x + size, y + size, x + (2*size) - 2, y + (2*size) - 2);
+        }
+        if (pieceType = 2) {
+            // Linea horizontal 1x3
+            do Screen.drawRectangle(x,           y, x + size - 2,      y + size - 2);
+            do Screen.drawRectangle(x + size,    y, x + (2*size) - 2,  y + size - 2);
+            do Screen.drawRectangle(x + (2*size),y, x + (3*size) - 2,  y + size - 2);
+        }
+        if (pieceType = 3) {
+            // Linea vertical 3x1
+            do Screen.drawRectangle(x, y,           x + size - 2, y + size - 2);
+            do Screen.drawRectangle(x, y + size,    x + size - 2, y + (2*size) - 2);
+            do Screen.drawRectangle(x, y + (2*size),x + size - 2, y + (3*size) - 2);
+        }
+        if (pieceType = 4) {
+            // Forma L
+            do Screen.drawRectangle(x, y,        x + size - 2, y + size - 2);
+            do Screen.drawRectangle(x, y + size, x + size - 2, y + (2*size) - 2);
+            do Screen.drawRectangle(x + size, y + size, x + (2*size) - 2, y + (2*size) - 2);
+        }
+        return;
+    }
+
+    /** Mueve la pieza a la izquierda si no sale del borde */
+    method void moveLeft() {
+        if (col > 0) {
+            do erase();
+            let col = col - 1;
+            do draw();
+        }
+        return;
+    }
+
+    /** Mueve la pieza a la derecha segun el ancho de pantalla (32 celdas) */
+    method void moveRight() {
+        var int maxCol;
+        let maxCol = 30;
+        if (pieceType = 1) { let maxCol = 30; }
+        if (pieceType = 2) { let maxCol = 29; }
+        if (pieceType = 3) { let maxCol = 31; }
+        if (pieceType = 4) { let maxCol = 30; }
+        if (col < maxCol) {
+            do erase();
+            let col = col + 1;
+            do draw();
+        }
+        return;
+    }
+
+    /** Baja la pieza una celda */
+    method void moveDown() {
+        var int maxRow;
+        let maxRow = 14;
+        if (pieceType = 1) { let maxRow = 13; }
+        if (pieceType = 3) { let maxRow = 12; }
+        if (pieceType = 4) { let maxRow = 13; }
+        if (row < maxRow) {
+            do erase();
+            let row = row + 1;
+            do draw();
+        }
+        return;
+    }
+
+    method int getRow()      { return row; }
+    method int getCol()      { return col; }
+    method int getType()     { return pieceType; }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}

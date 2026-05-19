@@ -1,0 +1,1707 @@
+function Map.new 1
+    push constant 4
+    call Memory.alloc 1
+    pop pointer 0
+    push constant 16
+    pop this 1
+    push constant 32
+    pop this 2
+    push constant 16
+    pop this 3
+    push constant 512
+    call Array.new 1
+    pop this 0
+    push constant 0
+    pop local 0
+label Map_0
+    push local 0
+    push constant 512
+    lt
+    not
+    if-goto Map_1
+    push local 0
+    push this 0
+    add
+    push constant 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    goto Map_0
+label Map_1
+    push pointer 0
+    return
+function Map.loadLevel 1
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 0
+label Map_2
+    push local 0
+    push constant 512
+    lt
+    not
+    if-goto Map_3
+    push local 0
+    push this 0
+    add
+    push constant 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    goto Map_2
+label Map_3
+    push argument 1
+    push constant 1
+    eq
+    not
+    if-goto Map_5
+    push pointer 0
+    call Map.loadLevel1 1
+    pop temp 0
+    goto Map_4
+label Map_5
+label Map_4
+    push argument 1
+    push constant 2
+    eq
+    not
+    if-goto Map_7
+    push pointer 0
+    call Map.loadLevel2 1
+    pop temp 0
+    goto Map_6
+label Map_7
+label Map_6
+    push argument 1
+    push constant 3
+    eq
+    not
+    if-goto Map_9
+    push pointer 0
+    call Map.loadLevel3 1
+    pop temp 0
+    goto Map_8
+label Map_9
+label Map_8
+    push constant 0
+    return
+function Map.setCell 0
+    push argument 0
+    pop pointer 0
+    push argument 1
+    push this 2
+    call Math.multiply 2
+    push argument 2
+    add
+    push this 0
+    add
+    push argument 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 0
+    return
+function Map.getCell 0
+    push argument 0
+    pop pointer 0
+    push argument 1
+    push this 2
+    call Math.multiply 2
+    push argument 2
+    add
+    push this 0
+    add
+    pop pointer 1
+    push that 0
+    return
+function Map.isSolid 1
+    push argument 0
+    pop pointer 0
+    push argument 1
+    push constant 0
+    lt
+    not
+    if-goto Map_11
+    push constant 0
+    return
+    goto Map_10
+label Map_11
+label Map_10
+    push argument 1
+    push constant 15
+    gt
+    not
+    if-goto Map_13
+    push constant 1
+    neg
+    return
+    goto Map_12
+label Map_13
+label Map_12
+    push argument 2
+    push constant 0
+    lt
+    not
+    if-goto Map_15
+    push constant 0
+    return
+    goto Map_14
+label Map_15
+label Map_14
+    push argument 2
+    push constant 31
+    gt
+    not
+    if-goto Map_17
+    push constant 0
+    return
+    goto Map_16
+label Map_17
+label Map_16
+    push argument 1
+    push this 2
+    call Math.multiply 2
+    push argument 2
+    add
+    push this 0
+    add
+    pop pointer 1
+    push that 0
+    pop local 0
+    push local 0
+    push constant 1
+    eq
+    push local 0
+    push constant 2
+    eq
+    or
+    push local 0
+    push constant 9
+    eq
+    or
+    return
+function Map.isDanger 1
+    push argument 0
+    pop pointer 0
+    push argument 1
+    push constant 0
+    lt
+    not
+    if-goto Map_19
+    push constant 0
+    return
+    goto Map_18
+label Map_19
+label Map_18
+    push argument 1
+    push constant 15
+    gt
+    not
+    if-goto Map_21
+    push constant 0
+    return
+    goto Map_20
+label Map_21
+label Map_20
+    push argument 2
+    push constant 0
+    lt
+    not
+    if-goto Map_23
+    push constant 0
+    return
+    goto Map_22
+label Map_23
+label Map_22
+    push argument 2
+    push constant 31
+    gt
+    not
+    if-goto Map_25
+    push constant 0
+    return
+    goto Map_24
+label Map_25
+label Map_24
+    push argument 1
+    push this 2
+    call Math.multiply 2
+    push argument 2
+    add
+    push this 0
+    add
+    pop pointer 1
+    push that 0
+    pop local 0
+    push local 0
+    push constant 3
+    eq
+    push local 0
+    push constant 4
+    eq
+    or
+    return
+function Map.isGoal 0
+    push argument 0
+    pop pointer 0
+    push argument 1
+    push constant 0
+    lt
+    not
+    if-goto Map_27
+    push constant 0
+    return
+    goto Map_26
+label Map_27
+label Map_26
+    push argument 1
+    push constant 15
+    gt
+    not
+    if-goto Map_29
+    push constant 0
+    return
+    goto Map_28
+label Map_29
+label Map_28
+    push argument 2
+    push constant 0
+    lt
+    not
+    if-goto Map_31
+    push constant 0
+    return
+    goto Map_30
+label Map_31
+label Map_30
+    push argument 2
+    push constant 31
+    gt
+    not
+    if-goto Map_33
+    push constant 0
+    return
+    goto Map_32
+label Map_33
+label Map_32
+    push argument 1
+    push this 2
+    call Math.multiply 2
+    push argument 2
+    add
+    push this 0
+    add
+    pop pointer 1
+    push that 0
+    push constant 9
+    eq
+    return
+function Map.groundBelow 2
+    push argument 0
+    pop pointer 0
+    push argument 1
+    push this 1
+    call Math.divide 2
+    pop local 0
+    push argument 2
+    push this 1
+    call Math.divide 2
+    pop local 1
+label Map_34
+    push local 1
+    push this 3
+    lt
+    not
+    if-goto Map_35
+    push pointer 0
+    push local 1
+    push local 0
+    call Map.isSolid 3
+    not
+    if-goto Map_37
+    push local 1
+    push this 1
+    call Math.multiply 2
+    return
+    goto Map_36
+label Map_37
+label Map_36
+    push local 1
+    push constant 1
+    add
+    pop local 1
+    goto Map_34
+label Map_35
+    push constant 256
+    return
+function Map.draw 5
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 0
+label Map_38
+    push local 0
+    push this 3
+    lt
+    not
+    if-goto Map_39
+    push constant 0
+    pop local 1
+label Map_40
+    push local 1
+    push this 2
+    lt
+    not
+    if-goto Map_41
+    push local 0
+    push this 2
+    call Math.multiply 2
+    push local 1
+    add
+    push this 0
+    add
+    pop pointer 1
+    push that 0
+    pop local 4
+    push local 1
+    push this 1
+    call Math.multiply 2
+    pop local 2
+    push local 0
+    push this 1
+    call Math.multiply 2
+    pop local 3
+    push local 4
+    push constant 1
+    eq
+    not
+    if-goto Map_43
+    push pointer 0
+    push local 2
+    push local 3
+    call Map.drawSolid 3
+    pop temp 0
+    goto Map_42
+label Map_43
+label Map_42
+    push local 4
+    push constant 2
+    eq
+    not
+    if-goto Map_45
+    push pointer 0
+    push local 2
+    push local 3
+    call Map.drawBlock 3
+    pop temp 0
+    goto Map_44
+label Map_45
+label Map_44
+    push local 4
+    push constant 3
+    eq
+    not
+    if-goto Map_47
+    push pointer 0
+    push local 2
+    push local 3
+    call Map.drawHole 3
+    pop temp 0
+    goto Map_46
+label Map_47
+label Map_46
+    push local 4
+    push constant 4
+    eq
+    not
+    if-goto Map_49
+    push pointer 0
+    push local 2
+    push local 3
+    call Map.drawSpike 3
+    pop temp 0
+    goto Map_48
+label Map_49
+label Map_48
+    push local 4
+    push constant 9
+    eq
+    not
+    if-goto Map_51
+    push pointer 0
+    push local 2
+    push local 3
+    call Map.drawGoal 3
+    pop temp 0
+    goto Map_50
+label Map_51
+label Map_50
+    push local 1
+    push constant 1
+    add
+    pop local 1
+    goto Map_40
+label Map_41
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    goto Map_38
+label Map_39
+    push constant 0
+    return
+function Map.drawCell 3
+    push argument 0
+    pop pointer 0
+    push argument 1
+    push constant 0
+    lt
+    not
+    if-goto Map_53
+    push constant 0
+    return
+    goto Map_52
+label Map_53
+label Map_52
+    push argument 1
+    push constant 15
+    gt
+    not
+    if-goto Map_55
+    push constant 0
+    return
+    goto Map_54
+label Map_55
+label Map_54
+    push argument 2
+    push constant 0
+    lt
+    not
+    if-goto Map_57
+    push constant 0
+    return
+    goto Map_56
+label Map_57
+label Map_56
+    push argument 2
+    push constant 31
+    gt
+    not
+    if-goto Map_59
+    push constant 0
+    return
+    goto Map_58
+label Map_59
+label Map_58
+    push argument 1
+    push this 2
+    call Math.multiply 2
+    push argument 2
+    add
+    push this 0
+    add
+    pop pointer 1
+    push that 0
+    pop local 2
+    push argument 2
+    push this 1
+    call Math.multiply 2
+    pop local 0
+    push argument 1
+    push this 1
+    call Math.multiply 2
+    pop local 1
+    push local 2
+    push constant 0
+    eq
+    not
+    if-goto Map_61
+    push constant 0
+    call Screen.setColor 1
+    pop temp 0
+    push local 0
+    push local 1
+    push local 0
+    push this 1
+    add
+    push constant 1
+    sub
+    push local 1
+    push this 1
+    add
+    push constant 1
+    sub
+    call Screen.drawRectangle 4
+    pop temp 0
+    goto Map_60
+label Map_61
+label Map_60
+    push local 2
+    push constant 1
+    eq
+    not
+    if-goto Map_63
+    push pointer 0
+    push local 0
+    push local 1
+    call Map.drawSolid 3
+    pop temp 0
+    goto Map_62
+label Map_63
+label Map_62
+    push local 2
+    push constant 2
+    eq
+    not
+    if-goto Map_65
+    push pointer 0
+    push local 0
+    push local 1
+    call Map.drawBlock 3
+    pop temp 0
+    goto Map_64
+label Map_65
+label Map_64
+    push local 2
+    push constant 3
+    eq
+    not
+    if-goto Map_67
+    push pointer 0
+    push local 0
+    push local 1
+    call Map.drawHole 3
+    pop temp 0
+    goto Map_66
+label Map_67
+label Map_66
+    push local 2
+    push constant 4
+    eq
+    not
+    if-goto Map_69
+    push pointer 0
+    push local 0
+    push local 1
+    call Map.drawSpike 3
+    pop temp 0
+    goto Map_68
+label Map_69
+label Map_68
+    push local 2
+    push constant 9
+    eq
+    not
+    if-goto Map_71
+    push pointer 0
+    push local 0
+    push local 1
+    call Map.drawGoal 3
+    pop temp 0
+    goto Map_70
+label Map_71
+label Map_70
+    push constant 0
+    return
+function Map.drawSolid 0
+    push argument 0
+    pop pointer 0
+    push constant 1
+    neg
+    call Screen.setColor 1
+    pop temp 0
+    push argument 1
+    push argument 2
+    push argument 1
+    push this 1
+    add
+    push constant 1
+    sub
+    push argument 2
+    push this 1
+    add
+    push constant 1
+    sub
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    call Screen.setColor 1
+    pop temp 0
+    push argument 1
+    push constant 1
+    add
+    push argument 2
+    push constant 1
+    add
+    push argument 1
+    push this 1
+    add
+    push constant 2
+    sub
+    push argument 2
+    push this 1
+    add
+    push constant 2
+    sub
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    return
+function Map.drawBlock 0
+    push argument 0
+    pop pointer 0
+    push constant 1
+    neg
+    call Screen.setColor 1
+    pop temp 0
+    push argument 1
+    push argument 2
+    push argument 1
+    push this 1
+    add
+    push constant 1
+    sub
+    push argument 2
+    push this 1
+    add
+    push constant 1
+    sub
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    call Screen.setColor 1
+    pop temp 0
+    push argument 1
+    push constant 2
+    add
+    push argument 2
+    push constant 2
+    add
+    call Screen.drawPixel 2
+    pop temp 0
+    push argument 1
+    push constant 13
+    add
+    push argument 2
+    push constant 2
+    add
+    call Screen.drawPixel 2
+    pop temp 0
+    push argument 1
+    push constant 2
+    add
+    push argument 2
+    push constant 13
+    add
+    call Screen.drawPixel 2
+    pop temp 0
+    push argument 1
+    push constant 13
+    add
+    push argument 2
+    push constant 13
+    add
+    call Screen.drawPixel 2
+    pop temp 0
+    push constant 0
+    return
+function Map.drawHole 0
+    push argument 0
+    pop pointer 0
+    push constant 1
+    neg
+    call Screen.setColor 1
+    pop temp 0
+    push argument 1
+    push argument 2
+    push argument 1
+    push this 1
+    add
+    push constant 1
+    sub
+    push argument 2
+    push this 1
+    add
+    push constant 1
+    sub
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    return
+function Map.drawSpike 0
+    push argument 0
+    pop pointer 0
+    push constant 1
+    neg
+    call Screen.setColor 1
+    pop temp 0
+    push argument 1
+    push argument 2
+    push argument 1
+    push this 1
+    add
+    push constant 1
+    sub
+    push argument 2
+    push this 1
+    add
+    push constant 1
+    sub
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    call Screen.setColor 1
+    pop temp 0
+    push argument 1
+    push constant 1
+    add
+    push argument 2
+    push constant 1
+    add
+    push argument 1
+    push this 1
+    add
+    push constant 2
+    sub
+    push argument 2
+    push this 1
+    add
+    push constant 2
+    sub
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 1
+    neg
+    call Screen.setColor 1
+    pop temp 0
+    push argument 1
+    push constant 4
+    add
+    push argument 2
+    push constant 3
+    add
+    push argument 1
+    push constant 4
+    add
+    push argument 2
+    push this 1
+    add
+    push constant 3
+    sub
+    call Screen.drawLine 4
+    pop temp 0
+    push argument 1
+    push constant 8
+    add
+    push argument 2
+    push constant 3
+    add
+    push argument 1
+    push constant 8
+    add
+    push argument 2
+    push this 1
+    add
+    push constant 3
+    sub
+    call Screen.drawLine 4
+    pop temp 0
+    push argument 1
+    push constant 12
+    add
+    push argument 2
+    push constant 3
+    add
+    push argument 1
+    push constant 12
+    add
+    push argument 2
+    push this 1
+    add
+    push constant 3
+    sub
+    call Screen.drawLine 4
+    pop temp 0
+    push constant 0
+    return
+function Map.drawGoal 0
+    push argument 0
+    pop pointer 0
+    push constant 1
+    neg
+    call Screen.setColor 1
+    pop temp 0
+    push argument 1
+    push argument 2
+    push argument 1
+    push this 1
+    add
+    push constant 1
+    sub
+    push argument 2
+    push this 1
+    add
+    push constant 1
+    sub
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    call Screen.setColor 1
+    pop temp 0
+    push argument 1
+    push constant 2
+    add
+    push argument 2
+    push constant 2
+    add
+    push argument 1
+    push this 1
+    add
+    push constant 3
+    sub
+    push argument 2
+    push this 1
+    add
+    push constant 3
+    sub
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 1
+    neg
+    call Screen.setColor 1
+    pop temp 0
+    push argument 1
+    push constant 4
+    add
+    push argument 2
+    push constant 4
+    add
+    push argument 1
+    push this 1
+    add
+    push constant 5
+    sub
+    push argument 2
+    push this 1
+    add
+    push constant 5
+    sub
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    return
+function Map.loadLevel1 1
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 0
+label Map_72
+    push local 0
+    push constant 32
+    lt
+    not
+    if-goto Map_73
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push local 0
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    goto Map_72
+label Map_73
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push constant 5
+    add
+    push this 0
+    add
+    push constant 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push constant 6
+    add
+    push this 0
+    add
+    push constant 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push constant 12
+    add
+    push this 0
+    add
+    push constant 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push constant 18
+    add
+    push this 0
+    add
+    push constant 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push constant 19
+    add
+    push this 0
+    add
+    push constant 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 11
+    push this 2
+    call Math.multiply 2
+    push constant 9
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 11
+    push this 2
+    call Math.multiply 2
+    push constant 10
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 10
+    push this 2
+    call Math.multiply 2
+    push constant 9
+    add
+    push this 0
+    add
+    push constant 4
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 10
+    push this 2
+    call Math.multiply 2
+    push constant 10
+    add
+    push this 0
+    add
+    push constant 4
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 12
+    push this 2
+    call Math.multiply 2
+    push constant 15
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 12
+    push this 2
+    call Math.multiply 2
+    push constant 16
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 13
+    push this 2
+    call Math.multiply 2
+    push constant 30
+    add
+    push this 0
+    add
+    push constant 9
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push constant 30
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 0
+    return
+function Map.loadLevel2 1
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 0
+label Map_74
+    push local 0
+    push constant 10
+    lt
+    not
+    if-goto Map_75
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push local 0
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    goto Map_74
+label Map_75
+    push constant 14
+    pop local 0
+label Map_76
+    push local 0
+    push constant 24
+    lt
+    not
+    if-goto Map_77
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push local 0
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    goto Map_76
+label Map_77
+    push constant 27
+    pop local 0
+label Map_78
+    push local 0
+    push constant 32
+    lt
+    not
+    if-goto Map_79
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push local 0
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    goto Map_78
+label Map_79
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push constant 10
+    add
+    push this 0
+    add
+    push constant 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push constant 11
+    add
+    push this 0
+    add
+    push constant 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push constant 12
+    add
+    push this 0
+    add
+    push constant 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push constant 13
+    add
+    push this 0
+    add
+    push constant 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push constant 24
+    add
+    push this 0
+    add
+    push constant 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push constant 25
+    add
+    push this 0
+    add
+    push constant 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push constant 26
+    add
+    push this 0
+    add
+    push constant 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 13
+    push this 2
+    call Math.multiply 2
+    push constant 3
+    add
+    push this 0
+    add
+    push constant 4
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 13
+    push this 2
+    call Math.multiply 2
+    push constant 7
+    add
+    push this 0
+    add
+    push constant 4
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 13
+    push this 2
+    call Math.multiply 2
+    push constant 16
+    add
+    push this 0
+    add
+    push constant 4
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 13
+    push this 2
+    call Math.multiply 2
+    push constant 20
+    add
+    push this 0
+    add
+    push constant 4
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 11
+    push this 2
+    call Math.multiply 2
+    push constant 5
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 11
+    push this 2
+    call Math.multiply 2
+    push constant 6
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 10
+    push this 2
+    call Math.multiply 2
+    push constant 18
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 10
+    push this 2
+    call Math.multiply 2
+    push constant 19
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 13
+    push this 2
+    call Math.multiply 2
+    push constant 30
+    add
+    push this 0
+    add
+    push constant 9
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push constant 30
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 0
+    return
+function Map.loadLevel3 1
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 0
+label Map_80
+    push local 0
+    push constant 5
+    lt
+    not
+    if-goto Map_81
+    push constant 14
+    push this 2
+    call Math.multiply 2
+    push local 0
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    goto Map_80
+label Map_81
+    push constant 12
+    push this 2
+    call Math.multiply 2
+    push constant 6
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 12
+    push this 2
+    call Math.multiply 2
+    push constant 7
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 12
+    push this 2
+    call Math.multiply 2
+    push constant 8
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 10
+    push this 2
+    call Math.multiply 2
+    push constant 10
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 10
+    push this 2
+    call Math.multiply 2
+    push constant 11
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 12
+    push this 2
+    call Math.multiply 2
+    push constant 13
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 12
+    push this 2
+    call Math.multiply 2
+    push constant 14
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 12
+    push this 2
+    call Math.multiply 2
+    push constant 15
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 10
+    push this 2
+    call Math.multiply 2
+    push constant 17
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 10
+    push this 2
+    call Math.multiply 2
+    push constant 18
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 12
+    push this 2
+    call Math.multiply 2
+    push constant 20
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 12
+    push this 2
+    call Math.multiply 2
+    push constant 21
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 10
+    push this 2
+    call Math.multiply 2
+    push constant 23
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 10
+    push this 2
+    call Math.multiply 2
+    push constant 24
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 12
+    push this 2
+    call Math.multiply 2
+    push constant 26
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 12
+    push this 2
+    call Math.multiply 2
+    push constant 27
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 12
+    push this 2
+    call Math.multiply 2
+    push constant 28
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 11
+    push this 2
+    call Math.multiply 2
+    push constant 6
+    add
+    push this 0
+    add
+    push constant 4
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 9
+    push this 2
+    call Math.multiply 2
+    push constant 10
+    add
+    push this 0
+    add
+    push constant 4
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 11
+    push this 2
+    call Math.multiply 2
+    push constant 14
+    add
+    push this 0
+    add
+    push constant 4
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 9
+    push this 2
+    call Math.multiply 2
+    push constant 18
+    add
+    push this 0
+    add
+    push constant 4
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 11
+    push this 2
+    call Math.multiply 2
+    push constant 21
+    add
+    push this 0
+    add
+    push constant 4
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 11
+    push this 2
+    call Math.multiply 2
+    push constant 30
+    add
+    push this 0
+    add
+    push constant 9
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 12
+    push this 2
+    call Math.multiply 2
+    push constant 30
+    add
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 0
+    return
+function Map.dispose 0
+    push argument 0
+    pop pointer 0
+    push this 0
+    call Array.dispose 1
+    pop temp 0
+    push pointer 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push constant 0
+    return

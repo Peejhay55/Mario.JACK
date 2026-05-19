@@ -1,0 +1,323 @@
+/**
+ * TetriPath - Map
+ * Gestiona la grilla del nivel: suelo, trampas y bloques colocados por el jugador.
+ *
+ * La pantalla es 512x256 pixeles.
+ * Grilla de celdas de 16x16: 32 columnas x 16 filas.
+ *
+ * grid[row * 32 + col] puede valer:
+ *   0 = vacio
+ *   1 = suelo solido
+ *   2 = bloque colocado por jugador (pieza de Tetris)
+ *   3 = hueco (trampa tipo 1, mata al caer)
+ *   4 = pinchos (trampa tipo 2, mata al tocar)
+ *   9 = meta
+ */
+class Map {
+    field Array grid;
+    field int cellSize;
+    field int cols;
+    field int rows;
+
+    constructor Map new() {
+        var int i;
+        let cellSize = 16;
+        let cols = 32;
+        let rows = 16;
+        let grid = Array.new(512);   // 32 * 16
+
+        // Inicializa todo en vacio
+        let i = 0;
+        while (i < 512) {
+            let grid[i] = 0;
+            let i = i + 1;
+        }
+        return this;
+    }
+
+    /** Carga el nivel 1 en la grilla */
+    method void loadLevel(int level) {
+        var int i;
+        // Limpia la grilla
+        let i = 0;
+        while (i < 512) {
+            let grid[i] = 0;
+            let i = i + 1;
+        }
+
+        if (level = 1) { do loadLevel1(); }
+        if (level = 2) { do loadLevel2(); }
+        if (level = 3) { do loadLevel3(); }
+        return;
+    }
+
+    method void setCell(int r, int c, int val) {
+        let grid[(r * cols) + c] = val;
+        return;
+    }
+
+    method int getCell(int r, int c) {
+        return grid[(r * cols) + c];
+    }
+
+    /** Devuelve true si la celda es solida (suelo o bloque del jugador) */
+    method boolean isSolid(int r, int c) {
+        var int v;
+        if (r < 0)    { return false; }
+        if (r > 15)   { return true;  }  // debajo del mapa = suelo
+        if (c < 0)    { return false; }
+        if (c > 31)   { return false; }
+        let v = grid[(r * cols) + c];
+        return ((v = 1) | (v = 2) | (v = 9));
+    }
+
+    /** Devuelve true si la celda es trampa mortal */
+    method boolean isDanger(int r, int c) {
+        var int v;
+        if (r < 0)  { return false; }
+        if (r > 15) { return false; }
+        if (c < 0)  { return false; }
+        if (c > 31) { return false; }
+        let v = grid[(r * cols) + c];
+        return ((v = 3) | (v = 4));
+    }
+
+    /** Devuelve true si la celda es la meta */
+    method boolean isGoal(int r, int c) {
+        if (r < 0)  { return false; }
+        if (r > 15) { return false; }
+        if (c < 0)  { return false; }
+        if (c > 31) { return false; }
+        return (grid[(r * cols) + c] = 9);
+    }
+
+    /**
+     * Dada la posicion X en pixeles del jugador,
+     * devuelve la Y en pixeles del suelo inmediatamente debajo.
+     * Busca desde la fila actual del jugador hacia abajo.
+     */
+    method int groundBelow(int px, int py) {
+        var int c, r;
+        let c = px / cellSize;
+        let r = py / cellSize;   // empieza desde la fila actual del jugador
+        while (r < rows) {
+            if (isSolid(r, c)) {
+                return r * cellSize;
+            }
+            let r = r + 1;
+        }
+        return 256;  // sin suelo: cae al vacio
+    }
+
+    /** Dibuja todo el mapa en pantalla */
+    method void draw() {
+        var int r, c, x, y, v;
+        let r = 0;
+        while (r < rows) {
+            let c = 0;
+            while (c < cols) {
+                let v = grid[(r * cols) + c];
+                let x = c * cellSize;
+                let y = r * cellSize;
+                if (v = 1) { do drawSolid(x, y); }
+                if (v = 2) { do drawBlock(x, y); }
+                if (v = 3) { do drawHole(x, y); }
+                if (v = 4) { do drawSpike(x, y); }
+                if (v = 9) { do drawGoal(x, y); }
+                let c = c + 1;
+            }
+            let r = r + 1;
+        }
+        return;
+    }
+
+    /** Dibuja una celda individual por coordenada de grilla */
+    method void drawCell(int r, int c) {
+        var int x, y, v;
+        if (r < 0)  { return; }
+        if (r > 15) { return; }
+        if (c < 0)  { return; }
+        if (c > 31) { return; }
+        let v = grid[(r * cols) + c];
+        let x = c * cellSize;
+        let y = r * cellSize;
+        if (v = 0) {
+            do Screen.setColor(false);
+            do Screen.drawRectangle(x, y, x + cellSize - 1, y + cellSize - 1);
+        }
+        if (v = 1) { do drawSolid(x, y);  }
+        if (v = 2) { do drawBlock(x, y);  }
+        if (v = 3) { do drawHole(x, y);   }
+        if (v = 4) { do drawSpike(x, y);  }
+        if (v = 9) { do drawGoal(x, y);   }
+        return;
+    }
+
+    method void drawSolid(int x, int y) {
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x, y, x + cellSize - 1, y + cellSize - 1);
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x + 1, y + 1, x + cellSize - 2, y + cellSize - 2);
+        return;
+    }
+
+    method void drawBlock(int x, int y) {
+        // Bloque del jugador: relleno con borde
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x, y, x + cellSize - 1, y + cellSize - 1);
+        do Screen.setColor(false);
+        do Screen.drawPixel(x + 2, y + 2);
+        do Screen.drawPixel(x + 13, y + 2);
+        do Screen.drawPixel(x + 2, y + 13);
+        do Screen.drawPixel(x + 13, y + 13);
+        return;
+    }
+
+    method void drawHole(int x, int y) {
+        // Hueco: cuadro negro solido
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x, y, x + cellSize - 1, y + cellSize - 1);
+        return;
+    }
+
+    method void drawSpike(int x, int y) {
+        // Pinchos: borde + 3 lineas verticales internas
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x, y, x + cellSize - 1, y + cellSize - 1);
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x + 1, y + 1, x + cellSize - 2, y + cellSize - 2);
+        do Screen.setColor(true);
+        do Screen.drawLine(x + 4,  y + 3, x + 4,  y + cellSize - 3);
+        do Screen.drawLine(x + 8,  y + 3, x + 8,  y + cellSize - 3);
+        do Screen.drawLine(x + 12, y + 3, x + 12, y + cellSize - 3);
+        return;
+    }
+
+    method void drawGoal(int x, int y) {
+        // Meta: cuadro con G en el centro (borde doble)
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x, y, x + cellSize - 1, y + cellSize - 1);
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x + 2, y + 2, x + cellSize - 3, y + cellSize - 3);
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x + 4, y + 4, x + cellSize - 5, y + cellSize - 5);
+        return;
+    }
+
+    // -------------------------------------------------------
+    // Niveles
+    // -------------------------------------------------------
+
+    method void loadLevel1() {
+        var int c;
+        // Suelo base en fila 14
+        let c = 0;
+        while (c < 32) {
+            let grid[(14 * cols) + c] = 1;
+            let c = c + 1;
+        }
+        // Huecos en el suelo
+        let grid[(14 * cols) + 5]  = 3;
+        let grid[(14 * cols) + 6]  = 3;
+        let grid[(14 * cols) + 12] = 3;
+        let grid[(14 * cols) + 18] = 3;
+        let grid[(14 * cols) + 19] = 3;
+        // Pinchos sobre plataforma elevada
+        let grid[(11 * cols) + 9]  = 1;
+        let grid[(11 * cols) + 10] = 1;
+        let grid[(10 * cols) + 9]  = 4;
+        let grid[(10 * cols) + 10] = 4;
+        // Plataforma flotante que ayuda a cruzar
+        let grid[(12 * cols) + 15] = 1;
+        let grid[(12 * cols) + 16] = 1;
+        // Meta
+        let grid[(13 * cols) + 30] = 9;
+        let grid[(14 * cols) + 30] = 1;
+        return;
+    }
+
+    method void loadLevel2() {
+        var int c;
+        // Suelo mas corto, mas huecos
+        let c = 0;
+        while (c < 10) {
+            let grid[(14 * cols) + c] = 1;
+            let c = c + 1;
+        }
+        let c = 14;
+        while (c < 24) {
+            let grid[(14 * cols) + c] = 1;
+            let c = c + 1;
+        }
+        let c = 27;
+        while (c < 32) {
+            let grid[(14 * cols) + c] = 1;
+            let c = c + 1;
+        }
+        // Huecos entre segmentos del suelo (10-13 y 24-26)
+        let grid[(14 * cols) + 10] = 3;
+        let grid[(14 * cols) + 11] = 3;
+        let grid[(14 * cols) + 12] = 3;
+        let grid[(14 * cols) + 13] = 3;
+        let grid[(14 * cols) + 24] = 3;
+        let grid[(14 * cols) + 25] = 3;
+        let grid[(14 * cols) + 26] = 3;
+        // Pinchos encima del suelo
+        let grid[(13 * cols) + 3]  = 4;
+        let grid[(13 * cols) + 7]  = 4;
+        let grid[(13 * cols) + 16] = 4;
+        let grid[(13 * cols) + 20] = 4;
+        // Plataformas flotantes
+        let grid[(11 * cols) + 5]  = 1;
+        let grid[(11 * cols) + 6]  = 1;
+        let grid[(10 * cols) + 18] = 1;
+        let grid[(10 * cols) + 19] = 1;
+        // Meta
+        let grid[(13 * cols) + 30] = 9;
+        let grid[(14 * cols) + 30] = 1;
+        return;
+    }
+
+    method void loadLevel3() {
+        var int c;
+        // Solo plataformas flotantes, sin suelo continuo
+        let c = 0;
+        while (c < 5) {
+            let grid[(14 * cols) + c] = 1;
+            let c = c + 1;
+        }
+        let grid[(12 * cols) + 6]  = 1;
+        let grid[(12 * cols) + 7]  = 1;
+        let grid[(12 * cols) + 8]  = 1;
+        let grid[(10 * cols) + 10] = 1;
+        let grid[(10 * cols) + 11] = 1;
+        let grid[(12 * cols) + 13] = 1;
+        let grid[(12 * cols) + 14] = 1;
+        let grid[(12 * cols) + 15] = 1;
+        let grid[(10 * cols) + 17] = 1;
+        let grid[(10 * cols) + 18] = 1;
+        let grid[(12 * cols) + 20] = 1;
+        let grid[(12 * cols) + 21] = 1;
+        let grid[(10 * cols) + 23] = 1;
+        let grid[(10 * cols) + 24] = 1;
+        let grid[(12 * cols) + 26] = 1;
+        let grid[(12 * cols) + 27] = 1;
+        let grid[(12 * cols) + 28] = 1;
+        // Pinchos
+        let grid[(11 * cols) + 6]  = 4;
+        let grid[(9  * cols) + 10] = 4;
+        let grid[(11 * cols) + 14] = 4;
+        let grid[(9  * cols) + 18] = 4;
+        let grid[(11 * cols) + 21] = 4;
+        // Meta
+        let grid[(11 * cols) + 30] = 9;
+        let grid[(12 * cols) + 30] = 1;
+        return;
+    }
+
+    method void dispose() {
+        do grid.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+}

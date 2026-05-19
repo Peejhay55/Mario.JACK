@@ -1,0 +1,42 @@
+/**
+ * TetriPath - Score
+ * Maneja el puntaje del jugador y lo muestra en pantalla.
+ */
+class Score {
+    field int points;
+    field int level;
+
+    constructor Score new() {
+        let points = 0;
+        let level  = 1;
+        return this;
+    }
+
+    method void addPoints(int p) {
+        let points = points + p;
+        return;
+    }
+
+    method void nextLevel() {
+        let level = level + 1;
+        return;
+    }
+
+    method int getPoints() { return points; }
+    method int getLevel()  { return level;  }
+
+    /** Muestra puntaje y nivel en la esquina superior derecha */
+    method void draw() {
+        do Output.moveCursor(0, 24);
+        do Output.printString("LVL:");
+        do Output.printInt(level);
+        do Output.printString(" PTS:");
+        do Output.printInt(points);
+        return;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}
