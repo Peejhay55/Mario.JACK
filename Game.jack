@@ -87,11 +87,24 @@ class Game {
 
     method void run() {
         var int level;
+        var boolean retry;
         let level = startLevel;
 
         while (running & (level < 4)) {
             do runLevel(level);
-            if (running) {
+            if (~running) {
+                // Murio: pregunta si reintentar
+                let retry = showGameOver();
+                if (retry) {
+                    // Reinicia desde el nivel en que murio
+                    let running = true;
+                    do score.reset(level);
+                    // No incrementa level: repite el mismo nivel
+                } else {
+                    // El jugador eligio salir
+                    let running = false;
+                }
+            } else {
                 do score.nextLevel();
                 let level = level + 1;
             }
@@ -141,8 +154,7 @@ class Game {
             // Murio
             do player.dispose();
             let player = null;
-            do showGameOver();
-            let running = false;
+            let running = false;   // senaliza muerte; run() decide si reintentar
         } else {
             // Llego a la meta
             do score.addPoints(100 * level);
@@ -204,44 +216,6 @@ class Game {
     }
 
     /**
-     * Escribe los bloques de la pieza en la grilla del mapa.
-     * Convierte la posicion de la pieza (en celdas) a celdas de la grilla.
-     */
-    method void placePiece(Piece p) {
-        var int r, c, t;
-        let r = p.getRow();
-        let c = p.getCol();
-        let t = p.getType();
-
-        if (t = 1) {   // cuadro 2x2
-            do setIfEmpty(r,   c);
-            do setIfEmpty(r,   c + 1);
-            do setIfEmpty(r + 1, c);
-            do setIfEmpty(r + 1, c + 1);
-        }
-        if (t = 2) {   // linea 1x3
-            do setIfEmpty(r, c);
-            do setIfEmpty(r, c + 1);
-            do setIfEmpty(r, c + 2);
-        }
-        if (t = 3) {   // linea 3x1
-            do setIfEmpty(r,     c);
-            do setIfEmpty(r + 1, c);
-            do setIfEmpty(r + 2, c);
-        }
-        if (t = 4) {   // forma L
-            do setIfEmpty(r,     c);
-            do setIfEmpty(r + 1, c);
-            do setIfEmpty(r + 1, c + 1);
-        }
-
-        // Redibuja el mapa para mostrar los bloques colocados
-        do gameMap.draw();
-        do score.draw();
-        return;
-    }
-
-    /**
      * Redibuja las celdas del mapa en un area 4x5 centrada en (px,py).
      * Cubre tanto la posicion anterior como la actual de Mario para
      * garantizar que ningun bloque quede borrado tras el erase().
@@ -275,6 +249,36 @@ class Game {
         if (c > 31) { return; }
         if (gameMap.getCell(r, c) = 0) {
             do gameMap.setCell(r, c, 2);
+        }
+        return;
+    }
+
+    method void placePiece(Piece p) {
+        var int r, c, t;
+        let r = p.getRow();
+        let c = p.getCol();
+        let t = p.getType();
+
+        if (t = 1) {
+            do setIfEmpty(r,     c);
+            do setIfEmpty(r,     c + 1);
+            do setIfEmpty(r + 1, c);
+            do setIfEmpty(r + 1, c + 1);
+        }
+        if (t = 2) {
+            do setIfEmpty(r, c);
+            do setIfEmpty(r, c + 1);
+            do setIfEmpty(r, c + 2);
+        }
+        if (t = 3) {
+            do setIfEmpty(r,     c);
+            do setIfEmpty(r + 1, c);
+            do setIfEmpty(r + 2, c);
+        }
+        if (t = 4) {
+            do setIfEmpty(r,     c);
+            do setIfEmpty(r + 1, c);
+            do setIfEmpty(r + 1, c + 1);
         }
         return;
     }
@@ -382,17 +386,30 @@ class Game {
     // -------------------------------------------------------
     // Pantallas de estado
     // -------------------------------------------------------
-    method void showGameOver() {
+
+    // Devuelve true si el jugador quiere reintentar, false si quiere salir.
+    method boolean showGameOver() {
+        var char key;
         do Screen.clearScreen();
-        do Output.moveCursor(6, 10);
-        do Output.printString("GAME OVER");
-        do Output.moveCursor(8, 6);
+        do Output.moveCursor(4, 11);
+        do Output.printString("GAME  OVER");
+        do Output.moveCursor(6, 6);
         do Output.printString("Puntaje final: ");
         do Output.printInt(score.getPoints());
-        do Output.moveCursor(10, 4);
-        do Output.printString("Presiona cualquier tecla...");
-        do Keyboard.readChar();
-        return;
+        do Output.moveCursor(9, 5);
+        do Output.printString("R = Reintentar nivel");
+        do Output.moveCursor(11, 5);
+        do Output.printString("Q = Salir del juego");
+        do Output.moveCursor(13, 7);
+        do Output.printString("Presiona R o Q");
+        // Espera hasta recibir R o Q
+        let key = 0;
+        while (~(key = 82) & ~(key = 114) & ~(key = 81) & ~(key = 113)) {
+            let key = Keyboard.readChar();
+        }
+        // R=82/114 reintentar, Q=81/113 salir
+        if ((key = 82) | (key = 114)) { return true; }
+        return false;
     }
 
     method void showLevelClear(int level) {

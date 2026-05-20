@@ -22,22 +22,29 @@ class Score {
         return;
     }
 
+    /** Reinicia puntos a 0 y establece el nivel actual (para reintentar) */
+    method void reset(int currentLevel) {
+        let points = 0;
+        let level  = currentLevel;
+        return;
+    }
+
     method int getPoints() { return points; }
     method int getLevel()  { return level;  }
 
     /** Muestra puntaje y nivel en la esquina superior derecha */
     method void draw() {
         do Output.moveCursor(0, 24);
-        do Output.printChar(76);
-        do Output.printChar(86);
-        do Output.printChar(76);
-        do Output.printChar(58);
+        do Output.printChar(76);  // L
+        do Output.printChar(86);  // V
+        do Output.printChar(76);  // L
+        do Output.printChar(58);  // :
         do Output.printInt(level);
-        do Output.printChar(32);
-        do Output.printChar(80);
-        do Output.printChar(84);
-        do Output.printChar(83);
-        do Output.printChar(58);
+        do Output.printChar(32);  // espacio
+        do Output.printChar(80);  // P
+        do Output.printChar(84);  // T
+        do Output.printChar(83);  // S
+        do Output.printChar(58);  // :
         do Output.printInt(points);
         return;
     }
