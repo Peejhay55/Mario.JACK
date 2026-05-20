@@ -1,14 +1,12 @@
-/**
- * TetriPath - Score
- * Maneja el puntaje del jugador y lo muestra en pantalla.
- */
 class Score {
     field int points;
     field int level;
+    field int blocks;   // NUEVO: bloques disponibles para colocar
 
     constructor Score new() {
         let points = 0;
         let level  = 1;
+        let blocks = 6;   // empieza con 6 bloques por nivel
         return this;
     }
 
@@ -19,33 +17,50 @@ class Score {
 
     method void nextLevel() {
         let level = level + 1;
+        let blocks = 6;   // repone bloques al pasar de nivel
         return;
     }
 
-    /** Reinicia puntos a 0 y establece el nivel actual (para reintentar) */
     method void reset(int currentLevel) {
         let points = 0;
         let level  = currentLevel;
+        let blocks = 6;   // repone bloques al reintentar
         return;
     }
 
+    method boolean useBlock() {
+        if (blocks > 0) {
+            let blocks = blocks - 1;
+            return true;
+        }
+        return false;
+    }
+
+    method int getBlocks() { return blocks; }
     method int getPoints() { return points; }
     method int getLevel()  { return level;  }
 
-    /** Muestra puntaje y nivel en la esquina superior derecha */
     method void draw() {
         do Output.moveCursor(0, 24);
-        do Output.printChar(76);  // L
-        do Output.printChar(86);  // V
-        do Output.printChar(76);  // L
-        do Output.printChar(58);  // :
+        do Output.printChar(76);   // L
+        do Output.printChar(86);   // V
+        do Output.printChar(76);   // L
+        do Output.printChar(58);   // :
         do Output.printInt(level);
-        do Output.printChar(32);  // espacio
-        do Output.printChar(80);  // P
-        do Output.printChar(84);  // T
-        do Output.printChar(83);  // S
-        do Output.printChar(58);  // :
+        do Output.printChar(32);
+        do Output.printChar(80);   // P
+        do Output.printChar(84);   // T
+        do Output.printChar(83);   // S
+        do Output.printChar(58);   // :
         do Output.printInt(points);
+        // NUEVO: muestra bloques disponibles
+        do Output.moveCursor(0, 0);
+        do Output.printChar(66);   // B
+        do Output.printChar(76);   // L
+        do Output.printChar(75);   // K
+        do Output.printChar(58);   // :
+        do Output.printInt(blocks);
+        do Output.printChar(32);   // espacio para limpiar digitos viejos
         return;
     }
 

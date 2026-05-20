@@ -188,16 +188,19 @@ class Game {
             if (key = 133) { do piece.moveDown();  do Sys.wait(80); }   // flecha abajo
 
             // Espacio: coloca la pieza y crea una nueva
-            if (key = 32) {
-                do placePiece(piece);
-                do piece.dispose();
-                // Cicla entre tipos 1-4
-                let pieceType = pieceType + 1;
-                if (pieceType > 4) { let pieceType = 1; }
-                let piece = Piece.new(pieceType);
-                do piece.draw();
-                do Sys.wait(200);
-            }
+            // DESPUES
+        // DESPUES — descuenta 1 bloque por pieza, no por celda
+if (key = 32) {
+    if (score.useBlock()) {
+        do placePiece(piece);
+        do piece.dispose();
+        let pieceType = pieceType + 1;
+        if (pieceType > 4) { let pieceType = 1; }
+        let piece = Piece.new(pieceType);
+        do piece.draw();
+        do Sys.wait(200);
+    }
+}
 
             // Q = terminar fase de construccion
             if ((key = 81) | (key = 113)) {
@@ -242,17 +245,17 @@ class Game {
         return;
     }
 
-    method void setIfEmpty(int r, int c) {
-        if (r < 0)  { return; }
-        if (r > 15) { return; }
-        if (c < 0)  { return; }
-        if (c > 31) { return; }
-        if (gameMap.getCell(r, c) = 0) {
-            do gameMap.setCell(r, c, 2);
-        }
-        return;
+    // DESPUES — cada celda colocada descuenta un bloque
+method void setIfEmpty(int r, int c) {
+    if (r < 0)  { return; }
+    if (r > 15) { return; }
+    if (c < 0)  { return; }
+    if (c > 31) { return; }
+    if (gameMap.getCell(r, c) = 0) {
+        do gameMap.setCell(r, c, 2);
     }
-
+    return;
+}
     method void placePiece(Piece p) {
         var int r, c, t;
         let r = p.getRow();
