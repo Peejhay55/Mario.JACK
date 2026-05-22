@@ -36,8 +36,6 @@ Colaboradores:
 	a) Sobre el recuadro blanco, a la derecha de "Screen", selecciona la opción `x2` para escalar la pantalla.
 
 
-[Video](https://www.youtube.com/watch?v=NQygBEfGHkc)
-
 	b) En el panel izquierdo de la VM, arrastra la barra de velocidad hasta `fast`.
 
 5. Correr el juego
@@ -46,3 +44,6 @@ Colaboradores:
 
 Disfruta y avísanos si quieres que añada instrucciones para ejecutar pruebas o compilar desde línea de comandos.
 
+
+
+[Video](https://www.youtube.com/watch?v=NQygBEfGHkc)
